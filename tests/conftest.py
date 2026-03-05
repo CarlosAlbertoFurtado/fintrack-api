@@ -55,17 +55,22 @@ app.dependency_overrides[get_db] = override_get_db
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[AsyncClient, None]:
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+    async with AsyncClient(
+        transport=transport,
+        base_url="http://test",
+        follow_redirects=True,
+    ) as ac:
         yield ac
 
 
 @pytest_asyncio.fixture
 async def auth_headers(client: AsyncClient) -> dict[str, str]:
     """Register a user and return auth headers for subsequent requests."""
-    resp = await client.post("/api/auth/register", json={
+    resp = await client.post("/api/auth/register/", json={
         "email": "test@example.com",
         "password": "test123456",
         "name": "Test User",
     })
     token = resp.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
+
