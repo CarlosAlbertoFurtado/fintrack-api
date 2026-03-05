@@ -8,7 +8,7 @@ from app.config import settings
 from app.shared.errors import AppError
 from app.shared.logger import setup_logging, logger
 from app.infrastructure.database.connection import connect_database, disconnect_database
-from app.presentation.routes import auth, transactions, categories, reports
+from app.presentation.routes import auth, transactions, categories, reports, budgets
 
 setup_logging()
 
@@ -66,3 +66,4 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(transactions.router, prefix="/api")
 app.include_router(categories.router, prefix="/api")
 app.include_router(reports.router, prefix="/api")
+app.include_router(budgets.router, prefix="/api")

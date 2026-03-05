@@ -42,7 +42,7 @@ FinTrack solves this by letting you log transactions and having GPT auto-categor
 | OpenAI | Transaction categorization + spending insights |
 | Pydantic v2 | Request/response validation |
 | structlog | JSON logs in prod, colored output in dev |
-| pytest | Unit tests for domain entities |
+| pytest + httpx | Unit & API integration tests |
 | Docker | Dev environment with docker-compose |
 | GitHub Actions | CI: ruff lint → pytest → docker build |
 
@@ -101,6 +101,10 @@ POST   /api/categories          → create custom category
 GET    /api/categories          → list user's categories
 DELETE /api/categories/:id      → delete (can't delete defaults)
 
+POST   /api/budgets             → create monthly budget for category
+GET    /api/budgets?month=3&year=2026 → list budgets (with spent/remaining)
+DELETE /api/budgets/:id         → delete
+
 GET    /api/reports/summary     → income/expenses/balance for period
 GET    /api/reports/by-category → spending breakdown with percentages
 GET    /api/reports/monthly-trend → income vs expenses over time
@@ -112,7 +116,8 @@ GET    /api/reports/insights    → AI-generated spending advice
 ```bash
 pytest                        # all tests
 pytest --cov=app              # with coverage
-pytest tests/unit/ -v         # verbose
+pytest tests/unit/ -v         # entity validation only
+pytest tests/api/ -v          # API integration tests
 ```
 
 ## Project structure
@@ -122,18 +127,19 @@ pytest tests/unit/ -v         # verbose
 
 domain/entities/     → User, Transaction, Category, Budget (dataclasses with validation)
 domain/interfaces/   → Repository ABCs, cache/AI service contracts
-application/         → RegisterUser, LoginUser, CreateTransaction, GetSummary
+application/         → RegisterUser, LoginUser, CreateTransaction, CreateBudget, GetSummary
 infrastructure/      → SQLAlchemy repos, Redis cache, OpenAI categorizer
-presentation/        → 4 route modules, JWT middleware, DI container
+presentation/        → 5 route modules, JWT middleware, DI container
 tests/unit/          → entity validation tests (23 test cases)
+tests/api/           → API integration tests (auth, transactions, categories, reports)
 ```
 
 ## Known limitations / TODO
 
-- [ ] Budget endpoints not wired up to routes yet (entity + repo ready)
 - [ ] No email notifications (SMTP config exists but service not implemented)
-- [ ] refresh token rotation endpoint missing
+- [ ] Refresh token rotation endpoint missing
 - [ ] Front-end not included (API only)
+- [ ] Budget spent field not updated automatically on new transactions yet
 
 ## License
 
