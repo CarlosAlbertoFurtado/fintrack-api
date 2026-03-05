@@ -8,10 +8,6 @@ Personal finance REST API with AI-powered transaction categorization.
 
 Built with **FastAPI**, **PostgreSQL**, **Redis**, and **OpenAI**.
 
-![Python](https://img.shields.io/badge/python-3.12-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
-![License](https://img.shields.io/badge/license-MIT-green)
-
 ---
 
 ## Why this exists
@@ -140,10 +136,10 @@ tests/api/           → API integration tests (auth, transactions, categories, 
 
 ## Known limitations / TODO
 
-- [ ] No email notifications (SMTP config exists but service not implemented)
-- [ ] Refresh token rotation endpoint missing
+- [x] Budget auto-updates spent when expenses are created
+- [ ] Refresh token rotation endpoint ([#5](https://github.com/CarlosAlbertoFurtado/fintrack-api/issues/5))
+- [ ] Email notifications (SMTP config exists but service not implemented)
 - [ ] Front-end not included (API only)
-- [ ] Budget spent field not updated automatically on new transactions yet
 
 ## License
 
