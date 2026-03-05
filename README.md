@@ -1,5 +1,9 @@
 # FinTrack API
 
+![CI](https://github.com/CarlosAlbertoFurtado/fintrack-api/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 Personal finance REST API with AI-powered transaction categorization.
 
 Built with **FastAPI**, **PostgreSQL**, **Redis**, and **OpenAI**.
