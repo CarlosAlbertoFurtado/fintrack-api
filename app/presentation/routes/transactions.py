@@ -12,11 +12,13 @@ from app.application.use_cases.create_transaction import CreateTransactionUseCas
 from app.domain.entities.transaction import TransactionType
 from app.domain.interfaces.repositories import PaginationParams, TransactionFilters
 from app.infrastructure.cache.redis_cache import RedisCacheService
+from app.infrastructure.repositories.budget_repository import SQLAlchemyBudgetRepository
 from app.infrastructure.repositories.category_repository import SQLAlchemyCategoryRepository
 from app.infrastructure.repositories.transaction_repository import SQLAlchemyTransactionRepository
 from app.infrastructure.services.ai_categorizer import OpenAICategorizerService
 from app.presentation.dependencies import (
     get_ai_service,
+    get_budget_repository,
     get_cache_service,
     get_category_repository,
     get_transaction_repository,
@@ -43,10 +45,11 @@ async def create(
     current_user: dict = Depends(get_current_user),
     tx_repo: SQLAlchemyTransactionRepository = Depends(get_transaction_repository),
     cat_repo: SQLAlchemyCategoryRepository = Depends(get_category_repository),
+    budget_repo: SQLAlchemyBudgetRepository = Depends(get_budget_repository),
     cache: RedisCacheService = Depends(get_cache_service),
     ai: OpenAICategorizerService = Depends(get_ai_service),
 ):
-    uc = CreateTransactionUseCase(tx_repo, cat_repo, cache, ai)
+    uc = CreateTransactionUseCase(tx_repo, cat_repo, budget_repo, cache, ai)
     tx = await uc.execute(current_user["user_id"], dto)
     return _serialize(tx)
 

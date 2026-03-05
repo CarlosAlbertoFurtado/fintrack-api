@@ -4,11 +4,13 @@ from app.application.dtos.schemas import CreateTransactionDTO
 from app.domain.entities.transaction import Transaction, TransactionType
 from app.domain.interfaces.repositories import (
     IAICategorizerService,
+    IBudgetRepository,
     ICacheService,
     ICategoryRepository,
     ITransactionRepository,
 )
 from app.shared.errors import NotFoundError
+from app.shared.logger import logger
 
 
 class CreateTransactionUseCase:
@@ -16,11 +18,13 @@ class CreateTransactionUseCase:
         self,
         transaction_repo: ITransactionRepository,
         category_repo: ICategoryRepository,
+        budget_repo: IBudgetRepository,
         cache: ICacheService,
         ai_service: IAICategorizerService,
     ):
         self.transaction_repo = transaction_repo
         self.category_repo = category_repo
+        self.budget_repo = budget_repo
         self.cache = cache
         self.ai_service = ai_service
 
@@ -50,11 +54,33 @@ class CreateTransactionUseCase:
 
         created = await self.transaction_repo.create(transaction)
 
+        # update budget spent if this is an expense with a category
+        if created.type == TransactionType.EXPENSE and created.category_id:
+            await self._update_budget_spent(user_id, created)
+
         # bust cached summaries so next request reflects the new transaction
         await self.cache.delete_pattern(f"summary:{user_id}:*")
         await self.cache.delete_pattern(f"transactions:{user_id}:*")
 
         return created
+
+    async def _update_budget_spent(self, user_id: str, transaction: Transaction) -> None:
+        """Find the matching budget and add the transaction amount to spent."""
+        tx_date = transaction.date
+        budgets = await self.budget_repo.find_by_user_and_month(
+            user_id, tx_date.month, tx_date.year,
+        )
+        for budget in budgets:
+            if budget.category_id == transaction.category_id:
+                new_spent = budget.spent + transaction.amount
+                await self.budget_repo.update(budget.id, spent=new_spent)
+                if budget.should_alert():
+                    logger.info(
+                        "budget_alert",
+                        budget_id=budget.id,
+                        percentage=budget.percentage_used,
+                    )
+                break
 
     async def _auto_categorize(self, user_id: str, description: str, tx_type: str) -> str | None:
         categories = await self.category_repo.find_by_user(user_id)
