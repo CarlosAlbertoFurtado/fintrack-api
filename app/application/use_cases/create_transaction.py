@@ -41,7 +41,7 @@ class CreateTransactionUseCase:
             amount=dto.amount,
             type=TransactionType(dto.type),
             user_id=user_id,
-            category_id=category_id or "",
+            category_id=category_id or None,
             date=dto.date or datetime.utcnow(),
             notes=dto.notes,
             is_recurring=dto.is_recurring,
