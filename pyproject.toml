@@ -3,8 +3,8 @@ target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "UP", "B"]
-ignore = ["B008", "UP046"]  # B008: FastAPI convention, UP046: type params too new
+select = ["E", "F", "I", "N", "B"]
+ignore = ["B008"]  # FastAPI Depends() convention
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
