@@ -1,11 +1,12 @@
 """
 Shared fixtures for API tests.
 
-Uses SQLite in-memory to avoid needing a real Postgres
-in local test runs. CI still uses real Postgres via env vars.
+Uses SQLite locally for speed. In CI, uses the real Postgres
+defined by DATABASE_URL env var.
 """
 
 import asyncio
+import os
 from collections.abc import AsyncGenerator
 
 import pytest
@@ -16,8 +17,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.infrastructure.database.connection import Base, get_db
 from app.main import app
 
-# in-memory sqlite for speed; CI overrides with real postgres
-TEST_DB_URL = "sqlite+aiosqlite:///./test.db"
+# CI sets DATABASE_URL to real postgres; locally we use sqlite
+TEST_DB_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
 engine = create_async_engine(TEST_DB_URL, echo=False)
 TestSession = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -73,4 +74,3 @@ async def auth_headers(client: AsyncClient) -> dict[str, str]:
     })
     token = resp.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
-
