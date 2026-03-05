@@ -11,12 +11,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
-from app.domain.entities.user import User, UserRole
-from app.domain.entities.transaction import Transaction, TransactionType
-from app.domain.entities.category import Category, CategoryType
 from app.domain.entities.budget import Budget
+from app.domain.entities.category import Category, CategoryType
+from app.domain.entities.transaction import Transaction, TransactionType
+from app.domain.entities.user import User, UserRole
 
 T = TypeVar("T")
 
@@ -44,14 +44,14 @@ class IUserRepository(ABC):
     async def create(self, user: User) -> User: ...
 
     @abstractmethod
-    async def find_by_id(self, user_id: str) -> Optional[User]: ...
+    async def find_by_id(self, user_id: str) -> User | None: ...
 
     @abstractmethod
-    async def find_by_email(self, email: str) -> Optional[User]: ...
+    async def find_by_email(self, email: str) -> User | None: ...
 
     @abstractmethod
     async def find_all(
-        self, params: PaginationParams, role: Optional[UserRole] = None
+        self, params: PaginationParams, role: UserRole | None = None
     ) -> PaginatedResult[User]: ...
 
     @abstractmethod
@@ -61,19 +61,19 @@ class IUserRepository(ABC):
     async def delete(self, user_id: str) -> None: ...
 
     @abstractmethod
-    async def update_refresh_token(self, user_id: str, token: Optional[str]) -> None: ...
+    async def update_refresh_token(self, user_id: str, token: str | None) -> None: ...
 
 
 @dataclass
 class TransactionFilters:
     user_id: str
-    type: Optional[TransactionType] = None
-    category_id: Optional[str] = None
-    date_from: Optional[datetime] = None
-    date_to: Optional[datetime] = None
-    min_amount: Optional[float] = None
-    max_amount: Optional[float] = None
-    search: Optional[str] = None
+    type: TransactionType | None = None
+    category_id: str | None = None
+    date_from: datetime | None = None
+    date_to: datetime | None = None
+    min_amount: float | None = None
+    max_amount: float | None = None
+    search: str | None = None
 
 
 class ITransactionRepository(ABC):
@@ -81,7 +81,7 @@ class ITransactionRepository(ABC):
     async def create(self, transaction: Transaction) -> Transaction: ...
 
     @abstractmethod
-    async def find_by_id(self, transaction_id: str) -> Optional[Transaction]: ...
+    async def find_by_id(self, transaction_id: str) -> Transaction | None: ...
 
     @abstractmethod
     async def find_all(
@@ -115,11 +115,11 @@ class ICategoryRepository(ABC):
     async def create(self, category: Category) -> Category: ...
 
     @abstractmethod
-    async def find_by_id(self, category_id: str) -> Optional[Category]: ...
+    async def find_by_id(self, category_id: str) -> Category | None: ...
 
     @abstractmethod
     async def find_by_user(
-        self, user_id: str, type: Optional[CategoryType] = None
+        self, user_id: str, type: CategoryType | None = None
     ) -> list[Category]: ...
 
     @abstractmethod
@@ -137,7 +137,7 @@ class IBudgetRepository(ABC):
     async def create(self, budget: Budget) -> Budget: ...
 
     @abstractmethod
-    async def find_by_id(self, budget_id: str) -> Optional[Budget]: ...
+    async def find_by_id(self, budget_id: str) -> Budget | None: ...
 
     @abstractmethod
     async def find_by_user_and_month(
@@ -153,7 +153,7 @@ class IBudgetRepository(ABC):
 
 class ICacheService(ABC):
     @abstractmethod
-    async def get(self, key: str) -> Optional[str]: ...
+    async def get(self, key: str) -> str | None: ...
 
     @abstractmethod
     async def set(self, key: str, value: str, ttl_seconds: int = 3600) -> None: ...
@@ -169,7 +169,7 @@ class IAICategorizerService(ABC):
     @abstractmethod
     async def categorize(
         self, description: str, available_categories: list[dict[str, str]]
-    ) -> Optional[str]: ...
+    ) -> str | None: ...
 
     @abstractmethod
     async def generate_insights(

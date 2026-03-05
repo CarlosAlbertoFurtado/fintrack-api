@@ -1,7 +1,7 @@
+from app.application.dtos.schemas import AuthResponseDTO, LoginDTO, UserResponseDTO
 from app.domain.interfaces.repositories import IUserRepository
-from app.application.dtos.schemas import LoginDTO, AuthResponseDTO, UserResponseDTO
 from app.shared.errors import UnauthorizedError
-from app.shared.security import verify_password, generate_tokens
+from app.shared.security import generate_tokens, verify_password
 
 
 class LoginUserUseCase:

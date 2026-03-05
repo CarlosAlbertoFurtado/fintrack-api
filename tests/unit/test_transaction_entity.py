@@ -1,4 +1,5 @@
 import pytest
+
 from app.domain.entities.transaction import Transaction, TransactionType
 
 

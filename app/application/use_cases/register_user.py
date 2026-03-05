@@ -1,8 +1,8 @@
+from app.application.dtos.schemas import AuthResponseDTO, RegisterDTO, UserResponseDTO
 from app.domain.entities.user import User, UserRole
-from app.domain.interfaces.repositories import IUserRepository, ICategoryRepository
-from app.application.dtos.schemas import RegisterDTO, AuthResponseDTO, UserResponseDTO
+from app.domain.interfaces.repositories import ICategoryRepository, IUserRepository
 from app.shared.errors import ConflictError
-from app.shared.security import hash_password, generate_tokens
+from app.shared.security import generate_tokens, hash_password
 
 
 class RegisterUserUseCase:

@@ -1,18 +1,19 @@
 from datetime import datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 
-from app.application.dtos.schemas import SummaryResponseDTO, CategoryBreakdownDTO
+from app.application.dtos.schemas import CategoryBreakdownDTO, SummaryResponseDTO
 from app.application.use_cases.get_financial_summary import GetFinancialSummaryUseCase
 from app.domain.interfaces.repositories import PaginationParams, TransactionFilters
+from app.infrastructure.cache.redis_cache import RedisCacheService
+from app.infrastructure.repositories.transaction_repository import SQLAlchemyTransactionRepository
+from app.infrastructure.services.ai_categorizer import OpenAICategorizerService
 from app.presentation.dependencies import (
-    get_transaction_repository, get_cache_service, get_ai_service,
+    get_ai_service,
+    get_cache_service,
+    get_transaction_repository,
 )
 from app.presentation.middlewares.auth import get_current_user
-from app.infrastructure.repositories.transaction_repository import SQLAlchemyTransactionRepository
-from app.infrastructure.cache.redis_cache import RedisCacheService
-from app.infrastructure.services.ai_categorizer import OpenAICategorizerService
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -22,8 +23,8 @@ async def summary(
     current_user: dict = Depends(get_current_user),
     tx_repo: SQLAlchemyTransactionRepository = Depends(get_transaction_repository),
     cache: RedisCacheService = Depends(get_cache_service),
-    date_from: Optional[datetime] = None,
-    date_to: Optional[datetime] = None,
+    date_from: datetime | None = None,
+    date_to: datetime | None = None,
 ):
     uc = GetFinancialSummaryUseCase(tx_repo, cache)
     return await uc.execute(current_user["user_id"], date_from, date_to)
@@ -33,8 +34,8 @@ async def summary(
 async def by_category(
     current_user: dict = Depends(get_current_user),
     tx_repo: SQLAlchemyTransactionRepository = Depends(get_transaction_repository),
-    date_from: Optional[datetime] = None,
-    date_to: Optional[datetime] = None,
+    date_from: datetime | None = None,
+    date_to: datetime | None = None,
 ):
     now = datetime.utcnow()
     start = date_from or now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)

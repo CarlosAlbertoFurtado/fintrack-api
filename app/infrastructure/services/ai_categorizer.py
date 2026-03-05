@@ -6,7 +6,6 @@ based on its description. Falls back gracefully if API key
 is missing or the call fails.
 """
 
-from typing import Optional
 
 from openai import AsyncOpenAI
 
@@ -17,11 +16,14 @@ from app.shared.logger import logger
 
 class OpenAICategorizerService(IAICategorizerService):
     def __init__(self) -> None:
-        self.client = AsyncOpenAI(api_key=settings.openai_api_key) if settings.openai_api_key else None
+        self.client = (
+            AsyncOpenAI(api_key=settings.openai_api_key)
+            if settings.openai_api_key else None
+        )
 
     async def categorize(
         self, description: str, available_categories: list[dict[str, str]]
-    ) -> Optional[str]:
+    ) -> str | None:
         if not self.client:
             return None
 

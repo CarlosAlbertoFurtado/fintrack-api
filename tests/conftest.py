@@ -6,7 +6,7 @@ in local test runs. CI still uses real Postgres via env vars.
 """
 
 import asyncio
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 import pytest
 import pytest_asyncio

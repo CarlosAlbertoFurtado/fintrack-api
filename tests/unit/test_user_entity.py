@@ -1,4 +1,5 @@
 import pytest
+
 from app.domain.entities.user import User, UserRole
 
 

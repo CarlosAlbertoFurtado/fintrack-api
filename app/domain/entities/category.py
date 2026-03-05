@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 from uuid import uuid4
 
 
-class CategoryType(str, Enum):
+class CategoryType(StrEnum):
     INCOME = "INCOME"
     EXPENSE = "EXPENSE"
 
@@ -51,7 +50,7 @@ class Category:
     type: CategoryType
     user_id: str
     id: str = field(default_factory=lambda: str(uuid4()))
-    icon: Optional[str] = None
+    icon: str | None = None
     color: str = "#6366F1"
     is_default: bool = False
     created_at: datetime = field(default_factory=datetime.utcnow)

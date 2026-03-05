@@ -1,12 +1,11 @@
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.application.dtos.schemas import CreateCategoryDTO, CategoryResponseDTO
+from app.application.dtos.schemas import CategoryResponseDTO, CreateCategoryDTO
 from app.domain.entities.category import Category, CategoryType
+from app.infrastructure.repositories.category_repository import SQLAlchemyCategoryRepository
 from app.presentation.dependencies import get_category_repository
 from app.presentation.middlewares.auth import get_current_user
-from app.infrastructure.repositories.category_repository import SQLAlchemyCategoryRepository
 from app.shared.errors import NotFoundError
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
@@ -33,7 +32,7 @@ async def create(
 async def list_all(
     current_user: dict = Depends(get_current_user),
     repo: SQLAlchemyCategoryRepository = Depends(get_category_repository),
-    type: Optional[str] = None,
+    type: str | None = None,
 ):
     cat_type = CategoryType(type) if type else None
     categories = await repo.find_by_user(current_user["user_id"], cat_type)

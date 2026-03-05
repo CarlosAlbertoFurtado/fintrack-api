@@ -5,10 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import settings
-from app.shared.errors import AppError
-from app.shared.logger import setup_logging, logger
 from app.infrastructure.database.connection import connect_database, disconnect_database
-from app.presentation.routes import auth, transactions, categories, reports, budgets
+from app.presentation.routes import auth, budgets, categories, reports, transactions
+from app.shared.errors import AppError
+from app.shared.logger import logger, setup_logging
 
 setup_logging()
 

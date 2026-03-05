@@ -3,12 +3,11 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 from uuid import uuid4
 
 
-class UserRole(str, Enum):
+class UserRole(StrEnum):
     ADMIN = "ADMIN"
     USER = "USER"
 
@@ -20,10 +19,10 @@ class User:
     role: UserRole
     is_active: bool = True
     id: str = field(default_factory=lambda: str(uuid4()))
-    password_hash: Optional[str] = None
-    avatar_url: Optional[str] = None
-    google_id: Optional[str] = None
-    refresh_token: Optional[str] = None
+    password_hash: str | None = None
+    avatar_url: str | None = None
+    google_id: str | None = None
+    refresh_token: str | None = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
 

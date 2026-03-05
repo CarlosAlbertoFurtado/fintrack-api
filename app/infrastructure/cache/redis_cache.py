@@ -1,4 +1,3 @@
-from typing import Optional
 
 import redis.asyncio as redis
 
@@ -13,7 +12,7 @@ class RedisCacheService(ICacheService):
             settings.redis_url, decode_responses=True, retry_on_timeout=True,
         )
 
-    async def get(self, key: str) -> Optional[str]:
+    async def get(self, key: str) -> str | None:
         try:
             return await self.client.get(key)
         except redis.RedisError as e:

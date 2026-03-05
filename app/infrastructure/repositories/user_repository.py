@@ -1,10 +1,9 @@
-from typing import Optional
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.user import User, UserRole
-from app.domain.interfaces.repositories import IUserRepository, PaginationParams, PaginatedResult
+from app.domain.interfaces.repositories import IUserRepository, PaginatedResult, PaginationParams
 from app.infrastructure.database.models import UserModel
 
 
@@ -46,18 +45,18 @@ class SQLAlchemyUserRepository(IUserRepository):
         await self.session.refresh(model)
         return self._to_domain(model)
 
-    async def find_by_id(self, user_id: str) -> Optional[User]:
+    async def find_by_id(self, user_id: str) -> User | None:
         result = await self.session.get(UserModel, user_id)
         return self._to_domain(result) if result else None
 
-    async def find_by_email(self, email: str) -> Optional[User]:
+    async def find_by_email(self, email: str) -> User | None:
         query = select(UserModel).where(UserModel.email == email)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
         return self._to_domain(model) if model else None
 
     async def find_all(
-        self, params: PaginationParams, role: Optional[UserRole] = None
+        self, params: PaginationParams, role: UserRole | None = None
     ) -> PaginatedResult[User]:
         query = select(UserModel)
         count_query = select(func.count()).select_from(UserModel)
@@ -96,7 +95,7 @@ class SQLAlchemyUserRepository(IUserRepository):
             await self.session.delete(model)
             await self.session.flush()
 
-    async def update_refresh_token(self, user_id: str, token: Optional[str]) -> None:
+    async def update_refresh_token(self, user_id: str, token: str | None) -> None:
         model = await self.session.get(UserModel, user_id)
         if model:
             model.refresh_token = token

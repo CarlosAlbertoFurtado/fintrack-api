@@ -4,6 +4,7 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B"]
+ignore = ["B008", "UP046"]  # B008: FastAPI convention, UP046: type params too new
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

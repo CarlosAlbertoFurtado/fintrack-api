@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 from uuid import uuid4
 
 
-class TransactionType(str, Enum):
+class TransactionType(StrEnum):
     INCOME = "INCOME"
     EXPENSE = "EXPENSE"
 
@@ -18,12 +17,12 @@ class Transaction:
     amount: float
     type: TransactionType
     user_id: str
-    category_id: Optional[str] = None
+    category_id: str | None = None
     id: str = field(default_factory=lambda: str(uuid4()))
     date: datetime = field(default_factory=datetime.utcnow)
-    notes: Optional[str] = None
+    notes: str | None = None
     is_recurring: bool = False
-    recurring_day: Optional[int] = None  # 1-31
+    recurring_day: int | None = None  # 1-31
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
 
@@ -54,4 +53,6 @@ class Transaction:
     def get_formatted_amount(self) -> str:
         prefix = "+" if self.is_income() else "-"
         # TODO: use locale for proper BRL formatting
-        return f"{prefix} R$ {self.amount:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        raw = f"{self.amount:,.2f}"
+        formatted = raw.replace(",", "X").replace(".", ",").replace("X", ".")
+        return f"{prefix} R$ {formatted}"

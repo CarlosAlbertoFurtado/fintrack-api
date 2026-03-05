@@ -1,7 +1,7 @@
-from .user import User, UserRole
-from .transaction import Transaction, TransactionType
-from .category import Category, CategoryType, DEFAULT_CATEGORIES
 from .budget import Budget
+from .category import DEFAULT_CATEGORIES, Category, CategoryType
+from .transaction import Transaction, TransactionType
+from .user import User, UserRole
 
 __all__ = [
     "User", "UserRole",

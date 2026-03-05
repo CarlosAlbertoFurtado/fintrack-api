@@ -1,14 +1,16 @@
 from datetime import datetime
-from typing import Optional
 
-from sqlalchemy import select, func, extract, and_
+from sqlalchemy import and_, extract, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.transaction import Transaction, TransactionType
 from app.domain.interfaces.repositories import (
-    ITransactionRepository, PaginationParams, PaginatedResult, TransactionFilters,
+    ITransactionRepository,
+    PaginatedResult,
+    PaginationParams,
+    TransactionFilters,
 )
-from app.infrastructure.database.models import TransactionModel, CategoryModel
+from app.infrastructure.database.models import CategoryModel, TransactionModel
 
 
 class SQLAlchemyTransactionRepository(ITransactionRepository):
@@ -49,7 +51,7 @@ class SQLAlchemyTransactionRepository(ITransactionRepository):
         await self.session.refresh(model)
         return self._to_domain(model)
 
-    async def find_by_id(self, transaction_id: str) -> Optional[Transaction]:
+    async def find_by_id(self, transaction_id: str) -> Transaction | None:
         result = await self.session.get(TransactionModel, transaction_id)
         return self._to_domain(result) if result else None
 
@@ -208,6 +210,11 @@ class SQLAlchemyTransactionRepository(ITransactionRepository):
 
         result = await self.session.execute(query)
         return [
-            {"year": int(row.year), "month": int(row.month), "type": row.type, "total": float(row.total)}
+            {
+                "year": int(row.year),
+                "month": int(row.month),
+                "type": row.type,
+                "total": float(row.total),
+            }
             for row in result.all()
         ]

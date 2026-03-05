@@ -1,8 +1,8 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.shared.security import decode_token
 from app.domain.entities.user import UserRole
+from app.shared.security import decode_token
 
 security = HTTPBearer()
 
@@ -26,6 +26,9 @@ async def get_current_user(
 def require_role(*roles: UserRole):
     async def checker(current_user: dict = Depends(get_current_user)) -> dict:
         if current_user["role"] not in [r.value for r in roles]:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions",
+            )
         return current_user
     return checker

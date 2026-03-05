@@ -1,10 +1,9 @@
-from typing import Optional
 from uuid import uuid4
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.category import Category, CategoryType, DEFAULT_CATEGORIES
+from app.domain.entities.category import DEFAULT_CATEGORIES, Category, CategoryType
 from app.domain.interfaces.repositories import ICategoryRepository
 from app.infrastructure.database.models import CategoryModel
 
@@ -41,12 +40,12 @@ class SQLAlchemyCategoryRepository(ICategoryRepository):
         await self.session.refresh(model)
         return self._to_domain(model)
 
-    async def find_by_id(self, category_id: str) -> Optional[Category]:
+    async def find_by_id(self, category_id: str) -> Category | None:
         result = await self.session.get(CategoryModel, category_id)
         return self._to_domain(result) if result else None
 
     async def find_by_user(
-        self, user_id: str, type: Optional[CategoryType] = None
+        self, user_id: str, type: CategoryType | None = None
     ) -> list[Category]:
         query = select(CategoryModel).where(CategoryModel.user_id == user_id)
         if type:

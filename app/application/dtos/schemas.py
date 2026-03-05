@@ -1,8 +1,6 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
-
 
 # --- Auth ---
 
@@ -22,7 +20,7 @@ class UserResponseDTO(BaseModel):
     email: str
     name: str
     role: str
-    avatar_url: Optional[str] = None
+    avatar_url: str | None = None
 
 
 class AuthResponseDTO(BaseModel):
@@ -37,19 +35,19 @@ class CreateTransactionDTO(BaseModel):
     description: str = Field(min_length=2, max_length=255)
     amount: float = Field(gt=0)
     type: str = Field(pattern="^(INCOME|EXPENSE)$")
-    category_id: Optional[str] = None
-    date: Optional[datetime] = None
-    notes: Optional[str] = Field(default=None, max_length=500)
+    category_id: str | None = None
+    date: datetime | None = None
+    notes: str | None = Field(default=None, max_length=500)
     is_recurring: bool = False
-    recurring_day: Optional[int] = Field(default=None, ge=1, le=31)
+    recurring_day: int | None = Field(default=None, ge=1, le=31)
 
 
 class UpdateTransactionDTO(BaseModel):
-    description: Optional[str] = Field(default=None, min_length=2, max_length=255)
-    amount: Optional[float] = Field(default=None, gt=0)
-    type: Optional[str] = Field(default=None, pattern="^(INCOME|EXPENSE)$")
-    category_id: Optional[str] = None
-    notes: Optional[str] = Field(default=None, max_length=500)
+    description: str | None = Field(default=None, min_length=2, max_length=255)
+    amount: float | None = Field(default=None, gt=0)
+    type: str | None = Field(default=None, pattern="^(INCOME|EXPENSE)$")
+    category_id: str | None = None
+    notes: str | None = Field(default=None, max_length=500)
 
 
 class TransactionResponseDTO(BaseModel):
@@ -57,9 +55,9 @@ class TransactionResponseDTO(BaseModel):
     description: str
     amount: float
     type: str
-    category_id: Optional[str]
+    category_id: str | None
     date: datetime
-    notes: Optional[str]
+    notes: str | None
     is_recurring: bool
     created_at: datetime
 
@@ -69,7 +67,7 @@ class TransactionResponseDTO(BaseModel):
 class CreateCategoryDTO(BaseModel):
     name: str = Field(min_length=2, max_length=100)
     type: str = Field(pattern="^(INCOME|EXPENSE)$")
-    icon: Optional[str] = None
+    icon: str | None = None
     color: str = Field(default="#6366F1", pattern="^#[0-9A-Fa-f]{6}$")
 
 
@@ -77,7 +75,7 @@ class CategoryResponseDTO(BaseModel):
     id: str
     name: str
     type: str
-    icon: Optional[str]
+    icon: str | None
     color: str
     is_default: bool
 
@@ -117,7 +115,7 @@ class SummaryResponseDTO(BaseModel):
 
 class CategoryBreakdownDTO(BaseModel):
     category: str
-    icon: Optional[str]
+    icon: str | None
     color: str
     type: str
     total: float
