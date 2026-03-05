@@ -25,6 +25,6 @@ openai==1.58.1
 
 # utils
 python-dotenv==1.0.1
-python-multipart==0.0.20
+python-multipart==0.0.22
 httpx==0.28.1
 structlog==24.4.0
