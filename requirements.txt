@@ -21,7 +21,7 @@ pydantic-settings==2.7.1
 email-validator==2.2.0
 
 # ai
-openai==1.58.1
+openai==2.24.0
 
 # utils
 python-dotenv==1.0.1
