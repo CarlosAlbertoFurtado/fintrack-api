@@ -18,7 +18,7 @@ class Transaction:
     amount: float
     type: TransactionType
     user_id: str
-    category_id: str
+    category_id: Optional[str] = None
     id: str = field(default_factory=lambda: str(uuid4()))
     date: datetime = field(default_factory=datetime.utcnow)
     notes: Optional[str] = None
@@ -37,8 +37,6 @@ class Transaction:
             raise ValueError("Amount must be greater than zero")
         if not self.user_id:
             raise ValueError("User ID is required")
-        if not self.category_id:
-            raise ValueError("Category ID is required")
         if self.is_recurring and self.recurring_day is not None:
             if not 1 <= self.recurring_day <= 31:
                 raise ValueError("Recurring day must be between 1 and 31")
