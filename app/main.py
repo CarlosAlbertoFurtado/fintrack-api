@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from app.config import settings
 from app.infrastructure.database.connection import connect_database, disconnect_database
 from app.presentation.routes import auth, budgets, categories, reports, transactions
+from app.presentation.middlewares.rate_limit import RateLimitMiddleware
 from app.shared.errors import AppError
 from app.shared.logger import logger, setup_logging
 
@@ -38,6 +39,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(RateLimitMiddleware, requests_per_minute=60)
 
 
 @app.exception_handler(AppError)
