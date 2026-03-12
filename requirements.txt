@@ -5,7 +5,7 @@ uvicorn[standard]==0.34.0
 # database
 sqlalchemy==2.0.36
 asyncpg==0.30.0
-alembic==1.14.1
+alembic==1.18.4
 
 # cache
 redis==5.2.1
